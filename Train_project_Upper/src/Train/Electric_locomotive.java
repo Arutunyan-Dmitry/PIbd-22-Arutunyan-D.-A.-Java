@@ -83,7 +83,7 @@ public class Electric_locomotive extends Train {
         //аккумулятор
         if (Battery)
         {
-            g2d.setColor(Color.red);
+            g2d.setColor(ColColor);
             g2d.fillRect(_startPosX + 110, _startPosY + 50, 30, 20);
         }
     }
