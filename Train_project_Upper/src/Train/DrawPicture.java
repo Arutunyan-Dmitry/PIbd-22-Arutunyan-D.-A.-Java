@@ -1,11 +1,11 @@
-package Trains;
+package Train;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class DrawPicture extends JComponent {
 
-    private Electric_locomotive electric_locomotive;
+    private ITransport iTransport;
 
     /**
      * Отрисовка компонента
@@ -13,8 +13,8 @@ public class DrawPicture extends JComponent {
      */
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (electric_locomotive != null) {
-            electric_locomotive.drawTrain(g);
+        if (iTransport != null) {
+            iTransport.DrawTransport(g);
         }
         super.repaint();
     }
@@ -23,16 +23,16 @@ public class DrawPicture extends JComponent {
      * Добавить объект
      * @param ex
      */
-    public void setVehicle(Electric_locomotive ex) {
-        this.electric_locomotive = ex;
+    public void setVehicle(ITransport ex) {
+        this.iTransport = ex;
     }
 
     /**
      * Взять объект
      * @return
      */
-    public Electric_locomotive getVehicle() {
-        return electric_locomotive;
+    public ITransport getVehicle() {
+        return iTransport;
     }
 
 }

@@ -1,4 +1,4 @@
-package Trains;
+package Train;
 
 public enum CollectorEnum {
     single, doubl, triple;
