@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Trains.FormElTrain">
+  <grid id="27dc6" binding="MainPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="308" height="192"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <grid id="56bed" binding="UpperPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints border-constraint="North"/>
+        <properties/>
+        <border type="empty">
+          <size top="10" left="10" bottom="0" right="0"/>
+        </border>
+        <children>
+          <component id="f1da5" class="javax.swing.JButton" binding="CreateButton">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="9" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Создать"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="55d1c" binding="BottomPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="2">
+        <constraints border-constraint="South"/>
+        <properties>
+          <enabled value="false"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <grid id="e149" binding="ButtonPanel" layout-manager="GridLayoutManager" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints/>
+            <properties/>
+            <border type="empty">
+              <size top="0" left="0" bottom="20" right="20"/>
+            </border>
+            <children>
+              <component id="36715" class="javax.swing.JButton" binding="buttonLeft">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="6" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <icon value="images/left.png"/>
+                  <text value=""/>
+                </properties>
+              </component>
+              <component id="71573" class="javax.swing.JButton" binding="buttonDown">
+                <constraints>
+                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="2" fill="0" indent="1" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <icon value="images/down.png"/>
+                  <text value=""/>
+                </properties>
+              </component>
+              <component id="dab04" class="javax.swing.JButton" binding="buttonRight">
+                <constraints>
+                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="1" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <icon value="images/right.png"/>
+                  <text value=""/>
+                </properties>
+              </component>
+              <component id="2d51d" class="javax.swing.JButton" binding="buttonUp">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="2" fill="0" indent="1" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <enabled value="true"/>
+                  <hideActionText value="true"/>
+                  <horizontalAlignment value="0"/>
+                  <icon value="images/up.png"/>
+                  <text value=""/>
+                  <verticalAlignment value="0"/>
+                </properties>
+              </component>
+              <grid id="5c80" binding="Spacer" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="empty">
+                  <size top="10" left="0" bottom="0" right="0"/>
+                </border>
+                <children/>
+              </grid>
+            </children>
+          </grid>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>
