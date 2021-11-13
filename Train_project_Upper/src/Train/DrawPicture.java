@@ -3,7 +3,7 @@ package Train;
 import javax.swing.*;
 import java.awt.*;
 
-public class DrawPicture extends JComponent {
+public class DrawPicture extends JPanel {
 
     private ITransport iTransport;
 

@@ -2,6 +2,6 @@ package Train;
 
 public class Main {
     public static void main(String[] args) {
-        FormElTrain gui = new FormElTrain();
+        DepotForm gui = new DepotForm();
     }
 }
