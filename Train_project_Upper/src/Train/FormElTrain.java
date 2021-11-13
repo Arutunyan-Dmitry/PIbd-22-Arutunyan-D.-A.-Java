@@ -1,4 +1,4 @@
-package Trains;
+package Train;
 
 import javax.swing.*;
 import java.awt.*;
@@ -6,22 +6,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Random;
 
-public class FormElTrain {
+public class FormElTrain extends JFrame{
 
-    private JButton CreateButton;
+    private JButton CreateTrainButton;
     private JButton buttonUp;
     private JButton buttonLeft;
     private JButton buttonDown;
     private JButton buttonRight;
-
-    private Electric_locomotive electric_locomotive;
-    private DrawPicture draw;
 
     private JPanel MainPanel;
     private JPanel ButtonPanel;
     private JPanel UpperPanel;
     private JPanel BottomPanel;
     private JPanel Spacer;
+    private JButton CreateElectricTrainButton;
+
+    private ITransport train;
+    private DrawPicture draw;
 
     public FormElTrain() {
         JFrame frame = new JFrame("Electric locomotive");
@@ -35,15 +36,30 @@ public class FormElTrain {
         draw = new DrawPicture();
 
         // Отработка нажатия кнопки создания электровоза
-        CreateButton.addActionListener(new ActionListener() {
+        CreateTrainButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Random rnd = new Random();
                 frame.remove(draw);
-                electric_locomotive = new Electric_locomotive();
-                electric_locomotive.Init(rnd.nextInt(200) + 100, rnd.nextInt(1000) + 1000, Color.decode("#F4A460"), Color.decode("#FFFF00"), Color.decode("#FF1493"), true, true, rnd.nextInt(3) + 1);
-                electric_locomotive.SetPosition(rnd.nextInt(90) + 10, rnd.nextInt(90) + 10, MainPanel.getWidth(), MainPanel.getHeight()  - BottomPanel.getHeight());
-                draw.setVehicle(electric_locomotive);
+                train = new Train(rnd.nextInt(200) + 100, rnd.nextInt(1000) + 1000, Color.decode("#F4A460"), Color.decode("#FFFF00"));
+                train.SetPosition(rnd.nextInt(90) + 10, rnd.nextInt(90) + 10, MainPanel.getWidth(), MainPanel.getHeight()  - BottomPanel.getHeight() - UpperPanel.getHeight());
+                draw.setVehicle(train);
+                frame.add(draw);
+                MainPanel.add(draw);
+                frame.repaint();
+                frame.setVisible(true);
+            }
+        });
+
+        CreateElectricTrainButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Random rnd = new Random();
+                frame.remove(draw);
+                train = new Electric_locomotive(rnd.nextInt(200) + 100, rnd.nextInt(1000) + 1000, Color.decode("#F4A460"), Color.decode("#FFFF00"), Color.decode("#FF1493"), true, true, rnd.nextInt(3),rnd.nextInt(3) + 1);
+                train.SetPosition(rnd.nextInt(90) + 10, rnd.nextInt(90) + 10, MainPanel.getWidth(), MainPanel.getHeight()  - BottomPanel.getHeight() - UpperPanel.getHeight());
+                draw.setVehicle(train);
+                frame.add(draw);
                 MainPanel.add(draw);
                 frame.repaint();
                 frame.setVisible(true);
@@ -55,10 +71,10 @@ public class FormElTrain {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Object name = e.getSource();
-                if(name == buttonLeft) electric_locomotive.MoveTransport(Direction.Left);
-                if(name == buttonRight) electric_locomotive.MoveTransport(Direction.Right);
-                if(name == buttonUp) electric_locomotive.MoveTransport(Direction.Up);
-                if(name == buttonDown) electric_locomotive.MoveTransport(Direction.Down);
+                if(name == buttonLeft) train.MoveTransport(Direction.Left);
+                if(name == buttonRight) train.MoveTransport(Direction.Right);
+                if(name == buttonUp) train.MoveTransport(Direction.Up);
+                if(name == buttonDown) train.MoveTransport(Direction.Down);
             }
         };
         buttonLeft.addActionListener(listener);
