@@ -1,10 +1,14 @@
 package Train;
 
 import java.awt.*;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Depot<T extends ITransport, G extends ICollectors> {
 
-    private final Object[] places;
+    private final List<T> places;
+
+    private final int maxCount;
 
     private final int pictureWidth;
 
@@ -15,58 +19,39 @@ public class Depot<T extends ITransport, G extends ICollectors> {
     private final int placeSizeHeight = 130;
 
     public Depot(int picWidth, int picHeight) {
-        int width = picWidth / placeSizeWidth;
-        int height = picHeight / placeSizeHeight;
-        places = new Object[width * height];
         pictureWidth = picWidth;
         pictureHeight = picHeight;
+        int width = picWidth / placeSizeWidth;
+        int height = picHeight / placeSizeHeight;
+        maxCount = width * height;
+        places = new ArrayList<>();
     }
 
     public int add(T vehicle) {
-        int width = pictureWidth / placeSizeWidth;
-        int height = pictureHeight / placeSizeHeight;
-
-        for (int i = 0; i < places.length; i++) {
-            if (CheckFreePlace(i)) {
-                vehicle.SetPosition(i % width * placeSizeWidth + 15,
-                        height + i / height * placeSizeHeight + 10,
-                        pictureWidth, pictureHeight);
-                places[i] = vehicle;
-                return i;
-            }
+        if (places.size() < maxCount) {
+            places.add(vehicle);
+            return places.size();
         }
         return -1;
     }
 
     public T delete(int index) {
-        if (index < 0 || index > places.length) {
-            return null;
-        }
-        if (!CheckFreePlace(index)) {
-            T vehicle = (T) places[index];
-            places[index] = null;
+        if (index >= 0 && index < maxCount && places.get(index) != null) {
+            T vehicle = places.get(index);
+            places.remove(index);
             return vehicle;
         }
         return null;
     }
 
-    private boolean CheckFreePlace(int indexPlace) {
-        return places[indexPlace] == null;
-    }
-
-    public boolean equal(Depot<T, G> depot, Depot<T, G> depotCompare) {
-        return depot.places.length == depotCompare.places.length; }
-
-    public boolean unequal(Depot<T, G> depot, Depot<T, G> depotCompare) {
-            return depot.places.length != depotCompare.places.length; }
-
     public void draw(Graphics g) {
+        int width = pictureWidth / placeSizeWidth;
         drawMarking(g);
-        for (Object place : places) {
-            if (place != null) {
-                T placeT = (T) place;
-                placeT.DrawTransport(g);
-            }
+        for (int i = 0; i < places.size(); i++) {
+            places.get(i).SetPosition(i % width * placeSizeWidth + 15,
+                    i / width * placeSizeHeight + 15,
+                    pictureWidth, pictureHeight);
+            places.get(i).DrawTransport(g);
         }
     }
 
@@ -82,5 +67,12 @@ public class Depot<T extends ITransport, G extends ICollectors> {
             g.drawLine(5 + i * placeSizeWidth, 5, 5 + i * placeSizeWidth,
                     5 + (pictureHeight / placeSizeHeight) * placeSizeHeight);
         }
+    }
+
+    public T get(int index) {
+        if (index > -1 && index < places.size()) {
+            return places.get(index);
+        }
+        return null;
     }
 }

@@ -23,7 +23,7 @@ public class FormElTrain extends JFrame{
 
     public FormElTrain() {
         JFrame frame = new JFrame("Electric locomotive");
-        frame.setSize(new Dimension(750, 600));
+        frame.setSize(new Dimension(750, 820));
         frame.setResizable(false);
 
         BottomPanel.setBackground(Color.GRAY);
