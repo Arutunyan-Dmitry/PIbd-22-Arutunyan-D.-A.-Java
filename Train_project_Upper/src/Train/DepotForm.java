@@ -5,12 +5,10 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 public class DepotForm {
     private JFrame frame;
     private JButton parkTrain;
-    private JButton parkElectric_locomotive;
     private JButton getTrainFromList;
     private JButton putTrainIntoList;
     private JButton addDepot;
@@ -39,7 +37,6 @@ public class DepotForm {
         frame.setLayout(null);
         frame.getContentPane().add(depotsGroupBox);
         frame.getContentPane().add(parkTrain);
-        frame.getContentPane().add(parkElectric_locomotive);
         frame.getContentPane().add(groupBox);
         frame.getContentPane().add(drawDepot);
         frame.getContentPane().setBackground(Color.PINK);
@@ -55,7 +52,6 @@ public class DepotForm {
         borderTake = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Забрать поезд");
         borderDepot = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Депо");
         parkTrain = new JButton("Припарковать поезд");
-        parkElectric_locomotive = new JButton("Припарковать электровоз");
         addDepot = new JButton("Добавить депо");
         deleteDepot = new JButton("Удалить депо");
         placeTransport = new JTextField();
@@ -96,10 +92,8 @@ public class DepotForm {
         groupBox.add(placeTransport);
         groupBox.add(getTrainFromList);
         groupBox.add(putTrainIntoList);
-        parkTrain.setBounds(730, 370, 190, 30);
+        parkTrain.setBounds(730, 395, 190, 40);
         parkTrain.addActionListener(e -> createTrain());
-        parkElectric_locomotive.setBounds(730, 405, 190, 30);
-        parkElectric_locomotive.addActionListener(e -> createElectric_locomotive());
         groupBox.setBounds(730, 440, 190, 120);
         placeText.setBounds(50, 20, 60, 30);
         placeTransport.setBounds(100, 20, 40, 25);
@@ -116,46 +110,13 @@ public class DepotForm {
 
     private void createTrain() {
         if (listBoxDepots.getSelectedIndex() >= 0) {
-            JColorChooser colorLowerDialog = new JColorChooser();
-            JOptionPane.showMessageDialog(frame, colorLowerDialog, "Выберите нижний цвет поезда", JOptionPane.PLAIN_MESSAGE);
-            if (colorLowerDialog.getColor() != null) {
-                JColorChooser colorUpperDialog = new JColorChooser();
-                JOptionPane.showMessageDialog(frame, colorUpperDialog, "Выберите верхний цвет поезда", JOptionPane.PLAIN_MESSAGE);
-                if (colorUpperDialog.getColor() != null) {
-                    ITransport transport = new Train(100, 1000, colorUpperDialog.getColor(), colorLowerDialog.getColor());
-                    if (depotCollections.get(listBoxDepots.getSelectedValue()).add(transport) > -1) {
-                        frame.repaint();
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Депо переполнено");
-                    }
-                }
-            }
-        } else {
-            JOptionPane.showMessageDialog(frame, "Депо не выбрано", "Ошибка", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-
-    private void createElectric_locomotive() {
-        if (listBoxDepots.getSelectedIndex() >= 0) {
-            JColorChooser colorLowerDialog = new JColorChooser();
-            JOptionPane.showMessageDialog(frame, colorLowerDialog, "Выберите нижний цвет поезда", JOptionPane.PLAIN_MESSAGE);
-            if (colorLowerDialog.getColor() != null) {
-                JColorChooser colorUpperDialog = new JColorChooser();
-                JOptionPane.showMessageDialog(frame, colorUpperDialog, "Выберите верхний цвет поезда", JOptionPane.PLAIN_MESSAGE);
-                if (colorUpperDialog.getColor() != null) {
-                    JColorChooser colorDopDialog = new JColorChooser();
-                    JOptionPane.showMessageDialog(frame, colorDopDialog, "Выберите дополнительный цвет поезда", JOptionPane.PLAIN_MESSAGE);
-                    if (colorDopDialog.getColor() != null) {
-                        Random rnd = new Random();
-                        ITransport transport = new Electric_locomotive(100, 1000, colorUpperDialog.getColor(), colorLowerDialog.getColor(),
-                                colorDopDialog.getColor(), true, true, rnd.nextInt(3), rnd.nextInt(3) + 1);
-                        if (depotCollections.get(listBoxDepots.getSelectedValue()).add(transport) > -1) {
-                            frame.repaint();
-                        } else {
-                            JOptionPane.showMessageDialog(frame, "Депо переполнено");
-                        }
-                    }
+            TrainConfigForm trainConfigForm = new TrainConfigForm(frame);
+            ITransport transport = trainConfigForm.getTransport();
+            if (transport != null) {
+                if (depotCollections.get(listBoxDepots.getSelectedValue()).add(transport) > -1) {
+                    frame.repaint();
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Депо переполнено");
                 }
             }
         } else {
