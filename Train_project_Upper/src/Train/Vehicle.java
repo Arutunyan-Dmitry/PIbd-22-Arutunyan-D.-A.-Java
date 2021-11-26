@@ -59,4 +59,12 @@ public abstract class Vehicle implements ITransport {
     }
     public abstract void DrawTransport(Graphics g);
     public abstract void MoveTransport(Direction direction);
+
+    public void SetUpperColor(Color color){
+        UpperColor = color;
+    }
+
+    public void SetLowerColor(Color color){
+        LowerColor = color;
+    }
 }

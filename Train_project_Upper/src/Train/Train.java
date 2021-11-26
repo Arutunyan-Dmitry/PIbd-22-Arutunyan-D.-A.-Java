@@ -92,9 +92,13 @@ public class Train extends Vehicle {
         int Upper_points_x[] = {_startPosX + 30, _startPosX + 190, _startPosX + 190, _startPosX + 10};
         int Upper_points_y[] = {_startPosY + 30, _startPosY + 30,_startPosY + 60, _startPosY + 60};
         g2d.fillPolygon(Upper_points_x, Upper_points_y, Upper_points_x.length);
+        g2d.setColor(Color.BLACK);
+        g2d.drawPolygon(Upper_points_x, Upper_points_y, Upper_points_x.length);
         // нижняя часть тепловоза
         g2d.setColor(LowerColor);
         g2d.fillRect(_startPosX + 10, _startPosY + 60, 180, 30);
+        g2d.setColor(Color.BLACK);
+        g2d.drawRect(_startPosX + 10, _startPosY + 60, 180, 30);
         // передний бампер
         g2d.setColor(Color.BLACK);
         int Front_bumper_x[] = {_startPosX + 10, _startPosX + 80, _startPosX + 80, _startPosX};

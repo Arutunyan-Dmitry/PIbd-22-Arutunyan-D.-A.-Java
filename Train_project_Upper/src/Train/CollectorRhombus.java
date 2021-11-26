@@ -2,13 +2,13 @@ package Train;
 
 import java.awt.*;
 
-public class CollectorRhomb implements ICollectors {
+public class CollectorRhombus implements ICollectors {
     /**
      * Возможное колличество токоприёмников
      */
     private CollectorEnum collectorEnum;
 
-    public CollectorRhomb(int number) { SetCollectorNum(number); };
+    public CollectorRhombus(int number) { SetCollectorNum(number); };
     /**
      * Текущее колличество токоприёмников
      */

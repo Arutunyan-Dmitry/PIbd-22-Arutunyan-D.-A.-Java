@@ -29,6 +29,7 @@ public class Electric_locomotive extends Train {
      * Интерфейс токоприёмников
      */
       private ICollectors iCollectors;
+      public void setCollectors(ICollectors iCollectors) {this.iCollectors = iCollectors;}
 
     /**
      * Инициализация свойств
@@ -41,7 +42,7 @@ public class Electric_locomotive extends Train {
      * @param battery Признак наличия аккумулятора
      */
     public Electric_locomotive(int maxSpeed, float weight, Color upperColor, Color lowerColor,
-                     Color colColor, boolean collector, boolean battery, int CollecrorForm, int CollectorNum)
+                     Color colColor, boolean collector, boolean battery, int CollectorForm, int CollectorNum)
     {
         super(maxSpeed, weight, upperColor, lowerColor, 200, 110);
         MaxSpeed = maxSpeed;
@@ -51,12 +52,12 @@ public class Electric_locomotive extends Train {
         ColColor = colColor;
         Collector = collector;
         Battery = battery;
-        switch (CollecrorForm) {
+        switch (CollectorForm) {
             case 0:
                 iCollectors = new CollectorLine(CollectorNum);
                 break;
             case 1:
-                iCollectors = new CollectorRhomb(CollectorNum);
+                iCollectors = new CollectorRhombus(CollectorNum);
                 break;
             case 2:
                 iCollectors = new CollectorRound(CollectorNum);
@@ -75,10 +76,11 @@ public class Electric_locomotive extends Train {
         super.DrawTransport(g);
         g2d.setColor(Color.BLACK);
         // отрисуем токоприёмник
-        if (Collector)
         g2d.setStroke(new BasicStroke(2));
-        {
-            iCollectors.DrawCollectors(g, _startPosX, _startPosY, ColColor);
+        if(Collector) {
+            if (iCollectors != null) {
+                iCollectors.DrawCollectors(g, _startPosX, _startPosY, ColColor);
+            }
         }
         //аккумулятор
         if (Battery)
@@ -86,6 +88,11 @@ public class Electric_locomotive extends Train {
             g2d.setColor(ColColor);
             g2d.fillRect(_startPosX + 110, _startPosY + 50, 30, 20);
         }
+    }
+
+    public void SetDopColor(Color color)
+    {
+        ColColor = color;
     }
 }
 
