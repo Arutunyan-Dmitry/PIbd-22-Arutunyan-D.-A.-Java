@@ -75,4 +75,8 @@ public class Depot<T extends ITransport, G extends ICollectors> {
         }
         return null;
     }
+
+    public void clear() {
+        places.clear();
+    }
 }

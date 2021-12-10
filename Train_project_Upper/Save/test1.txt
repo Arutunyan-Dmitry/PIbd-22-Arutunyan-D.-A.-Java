@@ -1,0 +1,3 @@
+DepotCollection
+Depot:fg
+Electric_Locomotive:100;1000.0;-15497964;-15497964;-65536;true;true;CollectorRound.2

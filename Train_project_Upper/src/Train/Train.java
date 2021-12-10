@@ -13,6 +13,8 @@ public class Train extends Vehicle {
      */
     protected int TrainHeight = 110;
 
+    protected String separator = ";";
+
     /**
      * Конструктор
      * @param maxSpeed Максимальная скорость
@@ -43,6 +45,16 @@ public class Train extends Vehicle {
         UpperColor = upperColor;
         this.TrainWidth = TrainWidth;
         this.TrainHeight = TrainHeight;
+    }
+
+    public Train(String info) {
+        String[] str = info.split(separator);
+        if (str.length == 4) {
+            MaxSpeed = Integer.parseInt(str[0]);
+            Weight = Float.parseFloat(str[1]);
+            LowerColor = Color.decode(str[2]);
+            UpperColor = Color.decode(str[3]);
+        }
     }
 
     /**
@@ -125,5 +137,10 @@ public class Train extends Vehicle {
         //сцепка
         g2d.setColor(Color.BLACK);
         g.fillRect(_startPosX + 190, _startPosY + 40, 10, 40);
+    }
+
+    @Override
+    public String toString() {
+        return MaxSpeed + separator + Weight + separator + LowerColor.getRGB() + separator + UpperColor.getRGB();
     }
 }

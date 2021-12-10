@@ -1,0 +1,5 @@
+DepotCollection
+Depot:asd
+Electric_Locomotive:100;1000.0;-15497964;-1178113;-16776961;true;true;CollectorRhombus.3
+Electric_Locomotive:100;1000.0;-16409601;-16776961;-39424;true;true;CollectorRhombus.2
+Electric_Locomotive:100;1000.0;-16711681;-65536;-1178113;true;true;CollectorRhombus.1
