@@ -2,6 +2,7 @@ package Train;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,11 +26,18 @@ public class DepotForm {
     private DepotCollections depotCollections;
     private DefaultListModel<String> depotList;
     private List<Train> listTransport;
+    private JMenuBar menuBar;
+    private JMenu fileMenu;
+    private JMenu depotFileMenu;
+    private JMenuItem saveFile;
+    private JMenuItem loadFile;
+    private JMenuItem saveDepot;
+    private JMenuItem loadDepot;
 
     public DepotForm() {
         initialization();
         frame = new JFrame("Депо");
-        frame.setSize(960, 740);
+        frame.setSize(960, 760);
         frame.setState(JFrame.NORMAL);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
@@ -39,6 +47,7 @@ public class DepotForm {
         frame.getContentPane().add(parkTrain);
         frame.getContentPane().add(groupBox);
         frame.getContentPane().add(drawDepot);
+        frame.setJMenuBar(menuBar);
         frame.getContentPane().setBackground(Color.PINK);
         frame.repaint();
     }
@@ -106,6 +115,32 @@ public class DepotForm {
             GetTrainFromList();
         });
         groupBox.setBorder(borderTake);
+
+        menuBar = new JMenuBar();
+        fileMenu = new JMenu("Файл");
+        saveFile = new JMenuItem("Сохранить");
+        saveFile.addActionListener(e -> {
+           saveFile();
+        });
+        loadFile = new JMenuItem("Загрузить");
+        loadFile.addActionListener(e -> {
+           loadFile();
+        });
+        depotFileMenu = new JMenu("Депо");
+        saveDepot = new JMenuItem("Сохранить");
+        saveDepot.addActionListener(e -> {
+           saveDepot();
+        });
+        loadDepot = new JMenuItem("Загрузить");
+        loadDepot.addActionListener(e -> {
+          loadDepot();
+        });
+        fileMenu.add(saveFile);
+        fileMenu.add(loadFile);
+        depotFileMenu.add(saveDepot);
+        depotFileMenu.add(loadDepot);
+        menuBar.add(fileMenu);
+        menuBar.add(depotFileMenu);
     }
 
     private void createTrain() {
@@ -202,5 +237,65 @@ public class DepotForm {
     private void changeItemList() {
         drawDepot.setSelectedItem(listBoxDepots.getSelectedValue());
         frame.repaint();
+    }
+
+    private void saveFile() {
+        JFileChooser fileSaveDialog = new JFileChooser();
+        fileSaveDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
+        int result = fileSaveDialog.showSaveDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            if (depotCollections.saveData(fileSaveDialog.getSelectedFile().getPath())) {
+                JOptionPane.showMessageDialog(frame, "Файл успешно сохранен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(frame, "Файл не сохранен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void loadFile() {
+        JFileChooser fileOpenDialog = new JFileChooser();
+        fileOpenDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
+        int result = fileOpenDialog.showOpenDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            if (depotCollections.loadData(fileOpenDialog.getSelectedFile().getPath())) {
+                JOptionPane.showMessageDialog(frame, "Файл успешно загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                reloadLevels();
+                frame.repaint();
+            } else {
+                JOptionPane.showMessageDialog(frame, "Файл не загружен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void saveDepot() {
+        JFileChooser fileSaveDialog = new JFileChooser();
+        fileSaveDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
+        if (listBoxDepots.getSelectedValue() == null) {
+            JOptionPane.showMessageDialog(frame, "Выберите стоянку", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int result = fileSaveDialog.showSaveDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            if (depotCollections.saveDepot(fileSaveDialog.getSelectedFile().getPath(), listBoxDepots.getSelectedValue())) {
+                JOptionPane.showMessageDialog(frame, "Файл успешно сохранен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(frame, "Файл не сохранен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void loadDepot() {
+        JFileChooser fileOpenDialog = new JFileChooser();
+        fileOpenDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
+        int result = fileOpenDialog.showOpenDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            if (depotCollections.loadDepot(fileOpenDialog.getSelectedFile().getPath())) {
+                JOptionPane.showMessageDialog(frame, "Файл успешно загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
+                reloadLevels();
+                frame.repaint();
+            } else {
+                JOptionPane.showMessageDialog(frame, "Файл не загружен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 }

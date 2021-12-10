@@ -390,7 +390,6 @@ public class TrainConfigForm extends JDialog {
         setVisible(true);
 
     }
-
     public ITransport getTransport() {
         return drawPicture.getVehicle();
     }
@@ -405,7 +404,6 @@ class PanelRhombus extends JPanel {
         g2d.drawPolygon(new int[] {20, 35, 20, 5}, new int[] {5,  20, 35, 20}, 4);
         super.repaint();
     }
-
 }
 
 class PanelRound extends JPanel {

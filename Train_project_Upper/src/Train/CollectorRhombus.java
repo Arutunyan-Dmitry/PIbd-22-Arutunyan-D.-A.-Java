@@ -44,4 +44,8 @@ public class CollectorRhombus implements ICollectors {
                 break;
         }
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + '.' + (collectorEnum.ordinal() + 1);}
 }

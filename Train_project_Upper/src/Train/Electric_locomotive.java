@@ -52,16 +52,30 @@ public class Electric_locomotive extends Train {
         ColColor = colColor;
         Collector = collector;
         Battery = battery;
-        switch (CollectorForm) {
-            case 0:
-                iCollectors = new CollectorLine(CollectorNum);
-                break;
-            case 1:
-                iCollectors = new CollectorRhombus(CollectorNum);
-                break;
-            case 2:
-                iCollectors = new CollectorRound(CollectorNum);
-                break;
+    }
+
+    public Electric_locomotive(String info) {
+        super(info);
+        String[] str = info.split(separator);
+        if (str.length == 8) {
+            MaxSpeed = Integer.parseInt(str[0]);
+            Weight = Float.parseFloat(str[1]);
+            UpperColor = Color.decode(str[2]);
+            LowerColor = Color.decode(str[3]);
+            ColColor = Color.decode(str[4]);
+            Battery = Boolean.parseBoolean(str[5]);
+            Collector = Boolean.parseBoolean(str[6]);
+            if (str[7].contains("null")) {
+                iCollectors = null;
+            } else {
+                String[] argsCollectors = str[7].split("\\.");
+                int digit = Integer.parseInt(argsCollectors[1]);
+                switch (argsCollectors[0]) {
+                    case "CollectorLine" -> iCollectors = new CollectorLine(digit);
+                    case "CollectorRound" -> iCollectors = new CollectorRound(digit);
+                    case "CollectorRhombus" -> iCollectors = new CollectorRhombus(digit);
+                }
+            }
         }
     }
 
@@ -93,6 +107,12 @@ public class Electric_locomotive extends Train {
     public void SetDopColor(Color color)
     {
         ColColor = color;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + separator + ColColor.getRGB() + separator + Battery + separator
+        + Collector + separator + iCollectors;
     }
 }
 
