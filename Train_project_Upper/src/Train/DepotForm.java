@@ -4,8 +4,14 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.KeyException;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 public class DepotForm {
     private JFrame frame;
@@ -33,6 +39,9 @@ public class DepotForm {
     private JMenuItem loadFile;
     private JMenuItem saveDepot;
     private JMenuItem loadDepot;
+    private Logger logger;
+    private String FatalMessage = "Здравствуй, разработчик!\n\nТребуется твоё вмешательсво, т.к." +
+            "во время работы кода возникло исключение уровня FATAL.\n\nИнформация по исключению:\n";
 
     public DepotForm() {
         initialization();
@@ -53,6 +62,8 @@ public class DepotForm {
     }
 
     public void initialization() {
+        logger = LogManager.getLogger(DepotForm.class);
+        PropertyConfigurator.configure("src/log4j2.properties");
         listTransport = new LinkedList<>();
         depotList = new DefaultListModel<>();
         depotCollections = new DepotCollections(690,650);
@@ -144,18 +155,26 @@ public class DepotForm {
     }
 
     private void createTrain() {
-        if (listBoxDepots.getSelectedIndex() >= 0) {
+        if (listBoxDepots.getSelectedValue() == null) {
+            JOptionPane.showMessageDialog(frame, "Депо не выбрано", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
             TrainConfigForm trainConfigForm = new TrainConfigForm(frame);
             ITransport transport = trainConfigForm.getTransport();
             if (transport != null) {
-                if (depotCollections.get(listBoxDepots.getSelectedValue()).add(transport) > -1) {
+                if (!depotCollections.get(listBoxDepots.getSelectedValue()).add(transport)) {
+                    logger.info("Добавлен поезд " + transport);
                     frame.repaint();
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Депо переполнено");
                 }
             }
-        } else {
-            JOptionPane.showMessageDialog(frame, "Депо не выбрано", "Ошибка", JOptionPane.ERROR_MESSAGE);
+        } catch (DepotOverflowException e) {
+            JOptionPane.showMessageDialog(frame, e.getMessage(), "переполнение", JOptionPane.ERROR_MESSAGE);
+            logger.warn("Попытка поставить поезд в уже заполненное депо");
+        }
+        catch (Exception e) {
+            logger.fatal(FatalMessage + "Неизвестная неудачная попытка поставить поезд в депо " + e.getMessage());
+            JOptionPane.showMessageDialog(frame,e.getMessage(), "Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -166,6 +185,7 @@ public class DepotForm {
                     Train transport = (Train) depotCollections.get(listBoxDepots.getSelectedValue()).delete(Integer.parseInt(placeTransport.getText()));
                     if (transport != null) {
                         listTransport.add(transport);
+                        logger.info("Добавили поезд " + transport + " в список");
                         frame.repaint();
                     } else {
                         JOptionPane.showMessageDialog(frame, "Не существующий транспорт", "Ошибка", JOptionPane.ERROR_MESSAGE);
@@ -186,6 +206,7 @@ public class DepotForm {
             if(result == JOptionPane.YES_OPTION) {
                 FormElTrain formElTrain = new FormElTrain();
                 formElTrain.setTrain(listTransport.get(0));
+                logger.info("Изъяли поезд " + listTransport.get(0) + " из списка");
                 listTransport.remove(0);
                 frame.repaint();
             }
@@ -213,6 +234,7 @@ public class DepotForm {
     private void AddDepot() {
         if (!depotsField.getText().equals("")) {
             depotCollections.AddDepot(depotsField.getText());
+            logger.info("Добавили депо " + depotsField.getText());
             reloadLevels();
             frame.repaint();
         } else {
@@ -226,6 +248,7 @@ public class DepotForm {
                     JOptionPane.YES_NO_OPTION);
             if (result == JOptionPane.YES_OPTION) {
                 depotCollections.DeleteDepot(listBoxDepots.getSelectedValue());
+                logger.info("Удалили депо " + listBoxDepots.getSelectedValue());
                 reloadLevels();
                 frame.repaint();
             }
@@ -236,6 +259,9 @@ public class DepotForm {
 
     private void changeItemList() {
         drawDepot.setSelectedItem(listBoxDepots.getSelectedValue());
+        if (listBoxDepots.getSelectedValue() != null) {
+            logger.info("Перешли в депо " + listBoxDepots.getSelectedValue());
+        }
         frame.repaint();
     }
 
@@ -244,10 +270,13 @@ public class DepotForm {
         fileSaveDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
         int result = fileSaveDialog.showSaveDialog(frame);
         if (result == JFileChooser.APPROVE_OPTION) {
-            if (depotCollections.saveData(fileSaveDialog.getSelectedFile().getPath())) {
+            try {
+                depotCollections.saveData(fileSaveDialog.getSelectedFile().getPath());
+                logger.info("Сохранено в файл " + fileSaveDialog.getSelectedFile().getPath());
                 JOptionPane.showMessageDialog(frame, "Файл успешно сохранен", "Результат", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(frame, "Файл не сохранен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception e){
+                logger.fatal(FatalMessage + "Неизвестная неудачная попытка сохранения файла "  + e.getMessage());
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Неизвестная ошибка при сохранении", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -257,12 +286,26 @@ public class DepotForm {
         fileOpenDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
         int result = fileOpenDialog.showOpenDialog(frame);
         if (result == JFileChooser.APPROVE_OPTION) {
-            if (depotCollections.loadData(fileOpenDialog.getSelectedFile().getPath())) {
+            try {
+                depotCollections.loadData(fileOpenDialog.getSelectedFile().getPath());
+                logger.info("Загружено из файла " + fileOpenDialog.getSelectedFile().getPath());
                 JOptionPane.showMessageDialog(frame, "Файл успешно загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
                 reloadLevels();
                 frame.repaint();
-            } else {
-                JOptionPane.showMessageDialog(frame, "Файл не загружен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            } catch (FileNotFoundException e) {
+                logger.warn("Попытка найти не существующий фаил для загрузки");
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Файл отсутствует", JOptionPane.ERROR_MESSAGE);
+            }
+            catch (IllegalArgumentException e) {
+                logger.warn("Попытка загрузки файла с неверным форматом");
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Неверный формат файла", JOptionPane.ERROR_MESSAGE);
+            }
+            catch (DepotOverflowException e) {
+                logger.warn("Попытка загрузки переполненного депо");
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Депо переполнено", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception e) {
+                logger.fatal(FatalMessage + "Неизвестная неудачная попытка загрузки файла "  + e.getMessage());
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Неизвестная ошибка при загрузке", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -271,15 +314,22 @@ public class DepotForm {
         JFileChooser fileSaveDialog = new JFileChooser();
         fileSaveDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
         if (listBoxDepots.getSelectedValue() == null) {
-            JOptionPane.showMessageDialog(frame, "Выберите стоянку", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Выберите депо", "Ошибка", JOptionPane.ERROR_MESSAGE);
             return;
         }
         int result = fileSaveDialog.showSaveDialog(frame);
         if (result == JFileChooser.APPROVE_OPTION) {
-            if (depotCollections.saveDepot(fileSaveDialog.getSelectedFile().getPath(), listBoxDepots.getSelectedValue())) {
+            try {
+                depotCollections.saveDepot(fileSaveDialog.getSelectedFile().getPath(), listBoxDepots.getSelectedValue());
+                logger.info("Депо " + listBoxDepots.getSelectedValue() + " сохранено в файл " + fileSaveDialog.getSelectedFile().getPath());
                 JOptionPane.showMessageDialog(frame, "Файл успешно сохранен", "Результат", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(frame, "Файл не сохранен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            } catch (KeyException e) {
+                logger.warn("Попытка сохранения несуществующего депо");
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Сохранение несуществующего депо", JOptionPane.ERROR_MESSAGE);
+            }
+            catch (Exception e) {
+                logger.fatal(FatalMessage + "Неизвестная неудачная попытка сохранения депо "  + e.getMessage());
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Неизвестная ошибка при сохранении", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -289,12 +339,26 @@ public class DepotForm {
         fileOpenDialog.setFileFilter(new FileNameExtensionFilter("Текстовый файл", "txt"));
         int result = fileOpenDialog.showOpenDialog(frame);
         if (result == JFileChooser.APPROVE_OPTION) {
-            if (depotCollections.loadDepot(fileOpenDialog.getSelectedFile().getPath())) {
+            try{
+                depotCollections.loadDepot(fileOpenDialog.getSelectedFile().getPath());
+                logger.info("Депо " + listBoxDepots.getSelectedValue() + " агружено из файла " + fileOpenDialog.getSelectedFile().getPath());
                 JOptionPane.showMessageDialog(frame, "Файл успешно загружен", "Результат", JOptionPane.INFORMATION_MESSAGE);
                 reloadLevels();
                 frame.repaint();
-            } else {
-                JOptionPane.showMessageDialog(frame, "Файл не загружен", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            } catch (FileNotFoundException e) {
+                logger.warn("Попытка найти не существующий фаил для загрузки депо");
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Файл отсутствует", JOptionPane.ERROR_MESSAGE);
+            }
+            catch (IllegalArgumentException e) {
+                logger.warn("Попытка загрузки депо из файла с неверным форматом");
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Неверный формат файла", JOptionPane.ERROR_MESSAGE);
+            }
+            catch (DepotOverflowException e) {
+                logger.warn("Попытка загрузки переполненного депо");
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Депо переполнено", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception e) {
+                logger.fatal(FatalMessage + "Неизвестная неудачная попытка загрузки файла " + e.getMessage());
+                JOptionPane.showMessageDialog(frame, e.getMessage(), "Неизвестная ошибка при загрузке", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
