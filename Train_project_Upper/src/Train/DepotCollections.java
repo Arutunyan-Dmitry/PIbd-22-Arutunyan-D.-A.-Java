@@ -1,13 +1,11 @@
 package Train;
 
+import java.io.*;
+import java.security.KeyException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class DepotCollections {
     private final Map<String, Depot<ITransport, ICollectors>> depotStages;
@@ -53,7 +51,7 @@ public class DepotCollections {
         return null;
     }
 
-    public boolean saveData(String filename) {
+    public void saveData(String filename) throws IOException {
         if (!filename.contains(".txt")) {
             filename += ".txt";
         }
@@ -71,15 +69,12 @@ public class DepotCollections {
                     fileWriter.write(transport.toString() + '\n');
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return true;
     }
 
-    public boolean loadData(String filename) {
+    public void loadData(String filename) throws IOException, DepotOverflowException{
         if (!(new File(filename).exists())) {
-            return false;
+            throw new FileNotFoundException("Файл " + filename + " не найден");
         }
 
         try (FileReader fileReader = new FileReader(filename)) {
@@ -87,7 +82,7 @@ public class DepotCollections {
             if (sc.nextLine().contains("DepotCollection")) {
                 depotStages.clear();
             } else {
-                return false;
+                throw new IllegalArgumentException("Неверный формат файла");
             }
 
             ITransport transport = null;
@@ -105,23 +100,20 @@ public class DepotCollections {
                     } else if (line.contains("Electric_Locomotive")) {
                         transport = new Electric_locomotive(line.split(separator)[1]);
                     }
-                    if (depotStages.get(key).add(transport) == -1) {
-                        return false;
+                    if (!depotStages.get(key).add(transport)) {
+                        throw new DepotOverflowException();
                     }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return true;
     }
 
-    public boolean saveDepot(String filename, String key) {
+    public void saveDepot(String filename, String key) throws IOException, KeyException {
         if (!filename.contains(".txt")) {
             filename += ".txt";
         }
         if (!depotStages.containsKey(key)) {
-            return false;
+            throw new KeyException();
         }
         try (FileWriter fileWriter = new FileWriter(filename, false)) {
             if (depotStages.containsKey(key))
@@ -135,13 +127,13 @@ public class DepotCollections {
                 }
                 fileWriter.write(transport.toString() + '\n');
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return true;
     }
 
-    public boolean loadDepot(String filename) {
+    public void loadDepot(String filename) throws IOException, DepotOverflowException{
+        if (!(new File(filename).exists())) {
+            throw new FileNotFoundException("Файл " + filename + " не найден");
+        }
         try (FileReader fileReader = new FileReader(filename)) {
             Scanner scanner = new Scanner(fileReader);
             String key;
@@ -155,7 +147,7 @@ public class DepotCollections {
                     depotStages.put(key, new Depot<ITransport, ICollectors>(pictureWidth, pictureHeight));
                 }
             } else {
-                return false;
+                throw new IllegalArgumentException("Неверный формат файла");
             }
             ITransport transport = null;
             while (scanner.hasNextLine()) {
@@ -166,14 +158,11 @@ public class DepotCollections {
                     } else if (line.contains("Electric_Locomotive")) {
                         transport = new Electric_locomotive(line.split(separator)[1]);
                     }
-                    if (depotStages.get(key).add(transport) == -1) {
-                        return false;
+                    if (!depotStages.get(key).add(transport)) {
+                        throw new DepotOverflowException();
                     }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return true;
     }
 }

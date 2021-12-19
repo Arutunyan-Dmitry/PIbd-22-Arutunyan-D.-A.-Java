@@ -27,21 +27,21 @@ public class Depot<T extends ITransport, G extends ICollectors> {
         places = new ArrayList<>();
     }
 
-    public int add(T vehicle) {
-        if (places.size() < maxCount) {
-            places.add(vehicle);
-            return places.size();
+    public boolean add(T vehicle) throws DepotOverflowException {
+        if (places.size() >= maxCount) {
+            throw new DepotOverflowException();
         }
-        return -1;
+        places.add(vehicle);
+        return true;
     }
 
-    public T delete(int index) {
-        if (index >= 0 && index < maxCount && places.get(index) != null) {
-            T vehicle = places.get(index);
-            places.remove(index);
-            return vehicle;
+    public T delete(int index) throws DepotNotFoundException {
+        if (index < -1 || index >= maxCount) {
+            throw new DepotNotFoundException(index);
         }
-        return null;
+        T vehicle = places.get(index);
+        places.remove(index);
+        return vehicle;
     }
 
     public void draw(Graphics g) {
