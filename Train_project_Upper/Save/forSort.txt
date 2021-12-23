@@ -1,0 +1,7 @@
+Depot:123
+Train:100;1000.0;-65536;-1178113
+Train:100;1000.0;-15497964;-1178113
+Train:100;1000.0;-65536;-256
+Electric_Locomotive:100;1000.0;-15497964;-16711681;-7993857;true;true;CollectorRhombus.3
+Electric_Locomotive:100;1000.0;-16711681;-15497964;-39424;true;true;CollectorRound.3
+Electric_Locomotive:100;1000.0;-1178113;-13107456;-65536;true;true;CollectorLine.1

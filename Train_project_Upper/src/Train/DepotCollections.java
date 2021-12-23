@@ -72,7 +72,7 @@ public class DepotCollections {
         }
     }
 
-    public void loadData(String filename) throws IOException, DepotOverflowException{
+    public void loadData(String filename) throws IOException, DepotOverflowException, DepotAlreadyHaveException{
         if (!(new File(filename).exists())) {
             throw new FileNotFoundException("Файл " + filename + " не найден");
         }
@@ -130,7 +130,7 @@ public class DepotCollections {
         }
     }
 
-    public void loadDepot(String filename) throws IOException, DepotOverflowException{
+    public void loadDepot(String filename) throws IOException, DepotOverflowException, DepotAlreadyHaveException{
         if (!(new File(filename).exists())) {
             throw new FileNotFoundException("Файл " + filename + " не найден");
         }

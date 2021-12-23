@@ -228,7 +228,7 @@ public class TrainConfigForm extends JDialog {
                 switch (label.getText()) {
                     case "Поезд" -> transport = new Train((int) spinnerMaxSpeed.getValue(), (int) spinnerWeight.getValue(), Color.WHITE, Color.LIGHT_GRAY);
                     case "Электровоз" -> transport = new Electric_locomotive((int) spinnerMaxSpeed.getValue(), (int) spinnerWeight.getValue(), Color.WHITE, Color.LIGHT_GRAY,
-                            Color.GRAY, checkBoxCollector.isSelected(), checkBoxBattery.isSelected(), -1, -1);
+                            Color.GRAY, checkBoxCollector.isSelected(), checkBoxBattery.isSelected());
                 }
             }
 

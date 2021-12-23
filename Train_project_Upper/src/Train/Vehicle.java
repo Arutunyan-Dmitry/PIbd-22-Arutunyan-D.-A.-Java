@@ -27,21 +27,25 @@ public abstract class Vehicle implements ITransport {
      * Максимальная скорость
      */
     public int MaxSpeed;
+    public int getMaxSpeed() {return MaxSpeed;}
 
     /**
      * Вес транспорта
      */
     public float Weight;
+    public float getWeight() {return Weight;}
 
     /**
      * Вес транспорта
      */
     public Color UpperColor;
+    public Color getUpperColor() {return UpperColor;}
 
     /**
      * Нижний цвет кузова
      */
     public Color LowerColor;
+    public Color getLowerColor() {return LowerColor;}
 
     /**
      * Установка позиции электровоза

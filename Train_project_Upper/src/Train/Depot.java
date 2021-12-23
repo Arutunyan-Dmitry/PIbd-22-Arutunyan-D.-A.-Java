@@ -1,10 +1,10 @@
 package Train;
 
 import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.ArrayList;
 
-public class Depot<T extends ITransport, G extends ICollectors> {
+public class Depot<T extends ITransport, G extends ICollectors>  implements Iterator<T>, Iterable<T>{
 
     private final List<T> places;
 
@@ -18,6 +18,8 @@ public class Depot<T extends ITransport, G extends ICollectors> {
 
     private final int placeSizeHeight = 130;
 
+    private int currentIndex;
+
     public Depot(int picWidth, int picHeight) {
         pictureWidth = picWidth;
         pictureHeight = picHeight;
@@ -25,11 +27,15 @@ public class Depot<T extends ITransport, G extends ICollectors> {
         int height = picHeight / placeSizeHeight;
         maxCount = width * height;
         places = new ArrayList<>();
+        currentIndex = -1;
     }
 
-    public boolean add(T vehicle) throws DepotOverflowException {
+    public boolean add(T vehicle) throws DepotOverflowException, DepotAlreadyHaveException {
         if (places.size() >= maxCount) {
             throw new DepotOverflowException();
+        }
+        if (places.contains(vehicle)) {
+            throw new DepotAlreadyHaveException();
         }
         places.add(vehicle);
         return true;
@@ -76,7 +82,32 @@ public class Depot<T extends ITransport, G extends ICollectors> {
         return null;
     }
 
+    public void sort() {
+        places.sort((Comparator<? super T>) new TrainComparer());
+    }
+
+
     public void clear() {
         places.clear();
+    }
+
+    @Override
+    public boolean hasNext() {
+        return currentIndex < places.size() - 1;
+    }
+
+    @Override
+    public T next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
+        currentIndex++;
+        return places.get(currentIndex);
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        currentIndex = -1;
+        return this;
     }
 }

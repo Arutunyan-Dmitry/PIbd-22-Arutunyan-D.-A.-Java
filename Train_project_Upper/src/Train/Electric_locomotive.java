@@ -1,8 +1,9 @@
 package Train;
 
 import java.awt.*;
+import java.util.Iterator;
 
-public class Electric_locomotive extends Train {
+public class Electric_locomotive extends Train  {
 
     /**
      * Цвет токоприёмника
@@ -28,8 +29,11 @@ public class Electric_locomotive extends Train {
     /**
      * Интерфейс токоприёмников
      */
-      private ICollectors iCollectors;
-      public void setCollectors(ICollectors iCollectors) {this.iCollectors = iCollectors;}
+    private ICollectors iCollectors;
+    public ICollectors getiCollectors() { return iCollectors; }
+    public void setCollectors(ICollectors iCollectors) {this.iCollectors = iCollectors;}
+
+    private int current;
 
     /**
      * Инициализация свойств
@@ -42,7 +46,7 @@ public class Electric_locomotive extends Train {
      * @param battery Признак наличия аккумулятора
      */
     public Electric_locomotive(int maxSpeed, float weight, Color upperColor, Color lowerColor,
-                     Color colColor, boolean collector, boolean battery, int CollectorForm, int CollectorNum)
+                     Color colColor, boolean collector, boolean battery)
     {
         super(maxSpeed, weight, upperColor, lowerColor, 200, 110);
         MaxSpeed = maxSpeed;
@@ -52,6 +56,7 @@ public class Electric_locomotive extends Train {
         ColColor = colColor;
         Collector = collector;
         Battery = battery;
+        current = -1;
     }
 
     public Electric_locomotive(String info) {
@@ -113,6 +118,121 @@ public class Electric_locomotive extends Train {
     public String toString() {
         return super.toString() + separator + ColColor.getRGB() + separator + Battery + separator
         + Collector + separator + iCollectors;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (!(object instanceof Electric_locomotive electric_locomotiveObject)) {
+            return false;
+        }
+        return equals(electric_locomotiveObject);
+    }
+
+    public boolean equals(Electric_locomotive other) {
+        if (other == null) {
+            return false;
+        }
+        if (!this.getClass().getSimpleName().equals(other.getClass().getSimpleName())) {
+            return false;
+        }
+        if (MaxSpeed != other.MaxSpeed) {
+            return false;
+        }
+        if (Weight != other.Weight) {
+            return false;
+        }
+        if (UpperColor.getRGB() != other.UpperColor.getRGB()) {
+            return false;
+        }
+        if (LowerColor.getRGB() != other.LowerColor.getRGB()) {
+            return false;
+        }
+        if (ColColor.getRGB() != other.ColColor.getRGB()) {
+            return false;
+        }
+        if (Collector != other.Collector) {
+            return false;
+        }
+        if (Battery != other.Battery) {
+            return false;
+        }
+        if (iCollectors != null && other.iCollectors != null && !(iCollectors.toString().equals(other.iCollectors.toString()))) {
+            return false;
+        }
+        if (iCollectors == null ^ other.iCollectors == null) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean hasNext() {
+        if (current > 7) {
+            current = -1;
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String next() {
+        current++;
+        switch (current) {
+            case 0 -> {
+                return String.valueOf(MaxSpeed);
+            }
+            case 1 -> {
+                return String.valueOf(Weight);
+            }
+            case 2 -> {
+                return String.valueOf(UpperColor.getRGB());
+            }
+            case 3 -> {
+                return String.valueOf(LowerColor.getRGB());
+            }
+            case 4 -> {
+                return String.valueOf(ColColor.getRGB());
+            }
+            case 5 -> {
+                return String.valueOf(Collector);
+            }
+            case 6 -> {
+                return String.valueOf(Battery);
+            }
+            case 7 -> {
+                return String.valueOf(iCollectors);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Iterator<String> iterator() {
+        return this;
+    }
+
+    @Override
+    public int compareTo(Train train) {
+        Electric_locomotive electric_locomotive = (Electric_locomotive) train;
+        if (ColColor.getRGB() != electric_locomotive.ColColor.getRGB()) {
+            return Integer.compare(ColColor.getRGB(), electric_locomotive.getColColor().getRGB());
+        }
+        if (Battery != electric_locomotive.Battery) {
+            return Boolean.compare(Battery, electric_locomotive.Battery);
+        }
+        if (Collector != electric_locomotive.Collector) {
+            return Boolean.compare(Collector, electric_locomotive.Collector);
+        }
+        if (iCollectors == null && electric_locomotive.iCollectors != null) {
+            return 1;
+        }
+        if (iCollectors != null && electric_locomotive.iCollectors == null) {
+            return -1;
+        }
+        return 0;
     }
 }
 
