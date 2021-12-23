@@ -42,6 +42,7 @@ public class DepotForm {
     private Logger logger;
     private String FatalMessage = "Здравствуй, разработчик!\n\nТребуется твоё вмешательсво, т.к." +
             "во время работы кода возникло исключение уровня FATAL.\n\nИнформация по исключению:\n";
+    private JButton sortTransport;
 
     public DepotForm() {
         initialization();
@@ -54,6 +55,7 @@ public class DepotForm {
         frame.setLayout(null);
         frame.getContentPane().add(depotsGroupBox);
         frame.getContentPane().add(parkTrain);
+        frame.getContentPane().add(sortTransport);
         frame.getContentPane().add(groupBox);
         frame.getContentPane().add(drawDepot);
         frame.setJMenuBar(menuBar);
@@ -71,6 +73,7 @@ public class DepotForm {
         drawDepot.setBackground(Color.LIGHT_GRAY);
         borderTake = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Забрать поезд");
         borderDepot = BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), "Депо");
+        sortTransport = new JButton("Сортировать");
         parkTrain = new JButton("Припарковать поезд");
         addDepot = new JButton("Добавить депо");
         deleteDepot = new JButton("Удалить депо");
@@ -112,9 +115,12 @@ public class DepotForm {
         groupBox.add(placeTransport);
         groupBox.add(getTrainFromList);
         groupBox.add(putTrainIntoList);
-        parkTrain.setBounds(730, 395, 190, 40);
+
+        sortTransport.setBounds(730, 365, 190, 40);
+        sortTransport.addActionListener(e -> { sort(); });
+        parkTrain.setBounds(730, 410, 190, 40);
         parkTrain.addActionListener(e -> createTrain());
-        groupBox.setBounds(730, 440, 190, 120);
+        groupBox.setBounds(730, 455, 190, 120);
         placeText.setBounds(50, 20, 60, 30);
         placeTransport.setBounds(100, 20, 40, 25);
         putTrainIntoList.setBounds(10, 55, 170, 25);
@@ -171,8 +177,10 @@ public class DepotForm {
         } catch (DepotOverflowException e) {
             JOptionPane.showMessageDialog(frame, e.getMessage(), "переполнение", JOptionPane.ERROR_MESSAGE);
             logger.warn("Попытка поставить поезд в уже заполненное депо");
-        }
-        catch (Exception e) {
+        } catch (DepotAlreadyHaveException e) {
+            JOptionPane.showMessageDialog(frame, e.getMessage(), "Совпадение", JOptionPane.ERROR_MESSAGE);
+            logger.warn("В депо уже есть такой транспорт");
+        } catch (Exception e) {
             logger.fatal(FatalMessage + "Неизвестная неудачная попытка поставить поезд в депо " + e.getMessage());
             JOptionPane.showMessageDialog(frame,e.getMessage(), "Неизвестная ошибка", JOptionPane.ERROR_MESSAGE);
         }
@@ -361,5 +369,15 @@ public class DepotForm {
                 JOptionPane.showMessageDialog(frame, e.getMessage(), "Неизвестная ошибка при загрузке", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+    private void sort() {
+        if (listBoxDepots.getSelectedValue() == null) {
+            JOptionPane.showMessageDialog(frame, "Депо не выбрано", "Ошибка", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        depotCollections.get(listBoxDepots.getSelectedValue()).sort();
+        frame.repaint();
+        logger.info("Транспорт в депо " + listBoxDepots.getSelectedValue() + " отсортирован");
     }
 }
